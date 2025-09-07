@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>{% block title %}BookMyStyle - Your Style, Your Time{% endblock %}</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    
+    <!-- Poppins Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .logo-text {
+            background: linear-gradient(135deg, #000000 0%, #8B5CF6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .purple-gradient {
+            background: linear-gradient(135deg, #8B5CF6 0%, #A855F7 100%);
+        }
+        .purple-gradient-hover:hover {
+            background: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%);
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Toast Container will be handled by Toastr.js -->
+
+    <!-- Main Content -->
+    <main class="min-h-screen">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- JavaScript -->
+    <script>
+        // Configure Toastr
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+
+        // Toast Notification System using Toastr.js
+        function showToast(message, type = 'info', duration = 5000) {
+            switch(type) {
+                case 'success':
+                    toastr.success(message);
+                    break;
+                case 'error':
+                    toastr.error(message);
+                    break;
+                case 'warning':
+                    toastr.warning(message);
+                    break;
+                default: // info
+                    toastr.info(message);
+            }
+        }
+
+        // Fetch API for getting toast details
+        function fetchToastDetails() {
+            fetch('/api/toast-details/', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.messages) {
+                    data.messages.forEach(message => {
+                        showToast(message.text, message.type, message.duration);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching toast details:', error);
+            });
+        }
+
+        // Helper function to get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Show messages from Django as toasts on page load
+        {% if messages %}
+            {% for message in messages %}
+                showToast('{{ message|escapejs }}', '{{ message.tags }}', 5000);
+            {% endfor %}
+        {% endif %}
+
+        // Prevent back button access after logout
+        function preventBackButton() {
+            // Clear the history and prevent back button
+            history.pushState(null, null, location.href);
+            window.onpopstate = function(event) {
+                history.go(1);
+            };
+        }
+
+        // Immediate redirect for logged out users on protected pages
+        {% if not user.is_authenticated %}
+            const currentPath = window.location.pathname;
+            const protectedPaths = ['/customer/', '/salon-owner/', '/admin-panel/', '/profile/'];
+            const isProtectedPage = protectedPaths.some(path => currentPath.startsWith(path));
+            
+            if (isProtectedPage) {
+                // Immediate redirect without waiting for page load
+                window.location.replace('{% url "accounts:login" %}');
+            }
+        {% endif %}
+
+        // Moderate back button prevention
+        function preventBackButtonModerately() {
+            // Only prevent back button for logged out users on protected pages
+            {% if not user.is_authenticated %}
+                const currentPath = window.location.pathname;
+                const protectedPaths = ['/customer/', '/salon-owner/', '/admin-panel/', '/profile/'];
+                const isProtectedPage = protectedPaths.some(path => currentPath.startsWith(path));
+                
+                if (isProtectedPage) {
+                    // Clear history and prevent back button
+                    if (window.history && window.history.pushState) {
+                        window.history.pushState(null, null, window.location.href);
+                        window.onpopstate = function(event) {
+                            // Redirect to login instead of reloading
+                            window.location.href = '{% url "accounts:login" %}';
+                        };
+                    }
+                }
+            {% endif %}
+        }
+
+        // Initialize on document ready
+        $(document).ready(function() {
+            // Fetch toast details on page load
+            fetchToastDetails();
+            
+            // Moderate back button prevention
+            preventBackButtonModerately();
+            
+            // Additional security measures (only for logged out users)
+            {% if not user.is_authenticated %}
+                // Clear browser history on page load
+                if (window.history && window.history.pushState) {
+                    window.history.pushState(null, null, window.location.href);
+                    window.onpopstate = function(event) {
+                        window.history.pushState(null, null, window.location.href);
+                    };
+                }
+            {% endif %}
+            
+            // Disable beforeunload warning for authentication pages
+            // These pages don't need the same level of back button prevention
+            // as they are public pages and form submissions should work smoothly
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

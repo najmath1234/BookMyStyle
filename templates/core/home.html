@@ -1,0 +1,553 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}BookMyStyle - Find Your Perfect Salon{% endblock %}
+{% block content %}
+
+<!-- Hero Section -->
+<div class=" text-white pt-20 pb-14 mb-0">
+    <div class="max-w-[1500px] mx-auto px-6">
+        <div class="text-center max-w-2xl mx-auto mb-10 ">
+            <h1 class="text-4xl md:text-5xl font-semibold text-purple-600 mb-4 leading-tight">Find your perfect salon</h1>
+            <p class="text-lg text-slate-700  opacity-90 font-normal">Discover amazing salons, book instantly, look fabulous</p>
+        </div>
+        
+        <!-- Search Bar -->
+        <form method="GET" action="{% url 'core:home' %}" class="bg-white border border-gray-200 rounded-full shadow-lg max-w-4xl mx-auto flex items-center overflow-hidden hover:shadow-xl transition-all duration-200">
+            <!-- Location Dropdown -->
+            <div class="flex-1 px-6 py-4 border-r border-gray-200 hover:bg-gray-50 transition-colors duration-200 cursor-pointer relative group" onclick="toggleLocationDropdown()">
+                <div class="text-xs font-semibold text-gray-900 mb-1 uppercase tracking-wide">Where</div>
+                <div class="flex items-center justify-between">
+                    <input type="text" id="locationInput" name="location" class="w-full text-sm text-gray-600 bg-transparent border-none outline-none font-normal" placeholder="Search locations" value="{{ search_location }}" readonly>
+                    <svg class="w-4 h-4 text-gray-400 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </div>
+                
+                <!-- Location Dropdown Menu -->
+                <div id="locationDropdown" class="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 z-50" style="display: none;">
+                    <div class="p-4">
+                        <div class="text-sm font-semibold text-gray-800 mb-3">Popular destinations</div>
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer" onclick="selectLocation('Mumbai, Maharashtra')">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                <span class="text-sm text-gray-700">Mumbai, Maharashtra</span>
+                            </div>
+                            <div class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer" onclick="selectLocation('Delhi, NCR')">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                <span class="text-sm text-gray-700">Delhi, NCR</span>
+                            </div>
+                            <div class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer" onclick="selectLocation('Bangalore, Karnataka')">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                <span class="text-sm text-gray-700">Bangalore, Karnataka</span>
+                            </div>
+                            <div class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer" onclick="selectLocation('Pune, Maharashtra')">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                <span class="text-sm text-gray-700">Pune, Maharashtra</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Service Dropdown -->
+            <div class="flex-1 px-6 py-4 border-r border-gray-200 hover:bg-gray-50 transition-colors duration-200 cursor-pointer relative group" onclick="toggleServiceDropdown()">
+                <div class="text-xs font-semibold text-gray-900 mb-1 uppercase tracking-wide">Service</div>
+                <div class="flex items-center justify-between">
+                    <span id="serviceText" class="text-sm text-gray-600 font-normal">{{ search_service|default:"Any service" }}</span>
+                    <svg class="w-4 h-4 text-gray-400 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </div>
+                
+                <!-- Service Dropdown Menu -->
+                <div id="serviceDropdown" class="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 z-50" style="display: none;">
+                    <div class="p-4">
+                        <div class="text-sm font-semibold text-gray-800 mb-3">Select service</div>
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer" onclick="selectService('Any service', '💇‍♀️')">
+                                <span class="text-lg">💇‍♀️</span>
+                                <span class="text-sm text-gray-700">Any service</span>
+                            </div>
+                            {% for category in service_categories %}
+                            <div class="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer" onclick="selectService('{{ category.name }}', '{{ category.icon|default:"💇‍♀️" }}')">
+                                <span class="text-lg">{{ category.icon|default:"💇‍♀️" }}</span>
+                                <span class="text-sm text-gray-700">{{ category.name }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" id="serviceInput" name="service" value="{{ search_service }}">
+            </div>
+            
+            <!-- Date/Time Dropdown -->
+            <div class="flex-1 px-6 py-4 hover:bg-gray-50 transition-colors duration-200 cursor-pointer relative group" onclick="toggleDateTimeDropdown()">
+                <div class="text-xs font-semibold text-gray-900 mb-1 uppercase tracking-wide">When</div>
+                <div class="flex items-center justify-between">
+                    <span id="dateTimeText" class="text-sm text-gray-600 font-normal">
+                        {% if search_date and search_time %}
+                            {{ search_date }} at {{ search_time }}
+                        {% elif search_date %}
+                            {{ search_date }}
+                        {% elif search_time %}
+                            Today at {{ search_time }}
+                        {% else %}
+                            Select date & time
+                        {% endif %}
+                    </span>
+                    <svg class="w-4 h-4 text-gray-400 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </div>
+                
+                <!-- Date/Time Dropdown Menu -->
+                <div id="dateTimeDropdown" class="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border border-gray-100 z-50" style="display: none;">
+                    <div class="p-4">
+                        <div class="text-sm font-semibold text-gray-800 mb-3">Select date & time</div>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-xs font-medium text-gray-600 mb-2 block">Date</label>
+                                <input type="date" id="dateInput" name="date" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" value="{{ search_date }}">
+                            </div>
+                            <div>
+                                <label class="text-xs font-medium text-gray-600 mb-2 block">Time</label>
+                                <select id="timeInput" name="time" class="w-full p-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                    <option value="">Select time</option>
+                                    <option value="09:00" {% if search_time == "09:00" %}selected{% endif %}>9:00 AM</option>
+                                    <option value="10:00" {% if search_time == "10:00" %}selected{% endif %}>10:00 AM</option>
+                                    <option value="11:00" {% if search_time == "11:00" %}selected{% endif %}>11:00 AM</option>
+                                    <option value="12:00" {% if search_time == "12:00" %}selected{% endif %}>12:00 PM</option>
+                                    <option value="13:00" {% if search_time == "13:00" %}selected{% endif %}>1:00 PM</option>
+                                    <option value="14:00" {% if search_time == "14:00" %}selected{% endif %}>2:00 PM</option>
+                                    <option value="15:00" {% if search_time == "15:00" %}selected{% endif %}>3:00 PM</option>
+                                    <option value="16:00" {% if search_time == "16:00" %}selected{% endif %}>4:00 PM</option>
+                                    <option value="17:00" {% if search_time == "17:00" %}selected{% endif %}>5:00 PM</option>
+                                    <option value="18:00" {% if search_time == "18:00" %}selected{% endif %}>6:00 PM</option>
+                                    <option value="19:00" {% if search_time == "19:00" %}selected{% endif %}>7:00 PM</option>
+                                    <option value="20:00" {% if search_time == "20:00" %}selected{% endif %}>8:00 PM</option>
+                                </select>
+                            </div>
+                            <div class="flex gap-2 pt-2">
+                                <button type="button" onclick="applyDateTime()" class="flex-1 bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors duration-200">Apply</button>
+                                <button type="button" onclick="clearDateTime()" class="px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors duration-200">Clear</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="bg-purple-600 hover:bg-purple-700 rounded-full w-12 h-12 flex items-center justify-center m-2 transition-all duration-200 hover:scale-105">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.553 15.553a7.06 7.06 0 1 0-9.985-9.985a7.06 7.06 0 0 0 9.985 9.985m0 0L20 20"/></svg>
+            </button>
+        </form>
+        {% comment %} <div class="flex gap-2 my-8 overflow-x-auto py-2 scrollbar-hide justify-center">
+            <button class="category-btn px-4 py-2 border border-gray-200 rounded-full bg-white text-sm font-medium cursor-pointer transition-all duration-200 whitespace-nowrap text-gray-600 hover:border-gray-900 hover:text-gray-900 hover:bg-gray-50 active">All Salons</button>
+            <button class="category-btn px-4 py-2 border border-gray-200 rounded-full bg-white text-sm font-medium cursor-pointer transition-all duration-200 whitespace-nowrap text-gray-600 hover:border-gray-900 hover:text-gray-900 hover:bg-gray-50">Hair Specialists</button>
+            <button class="category-btn px-4 py-2 border border-gray-200 rounded-full bg-white text-sm font-medium cursor-pointer transition-all duration-200 whitespace-nowrap text-gray-600 hover:border-gray-900 hover:text-gray-900 hover:bg-gray-50">Spa & Wellness</button>
+            <button class="category-btn px-4 py-2 border border-gray-200 rounded-full bg-white text-sm font-medium cursor-pointer transition-all duration-200 whitespace-nowrap text-gray-600 hover:border-gray-900 hover:text-gray-900 hover:bg-gray-50">Nail Studios</button>
+            <button class="category-btn px-4 py-2 border border-gray-200 rounded-full bg-white text-sm font-medium cursor-pointer transition-all duration-200 whitespace-nowrap text-gray-600 hover:border-gray-900 hover:text-gray-900 hover:bg-gray-50">Bridal Services</button>
+            <button class="category-btn px-4 py-2 border border-gray-200 rounded-full bg-white text-sm font-medium cursor-pointer transition-all duration-200 whitespace-nowrap text-gray-600 hover:border-gray-900 hover:text-gray-900 hover:bg-gray-50">Men's Grooming</button>
+            <button class="category-btn px-4 py-2 border border-gray-200 rounded-full bg-white text-sm font-medium cursor-pointer transition-all duration-200 whitespace-nowrap text-gray-600 hover:border-gray-900 hover:text-gray-900 hover:bg-gray-50">Luxury Salons</button>
+        </div> {% endcomment %}
+    </div>
+        </div>
+
+<!-- Main Content -->
+<div class="max-w-[1500px]  mx-auto px-6  mb-16">
+    <!-- Category Filters -->
+   
+
+    <!-- Search Results or Featured Salons -->
+    {% if search_location or search_service or search_date or search_time %}
+    <div class="flex justify-between items-center my-12">
+        <h2 class="text-2xl font-semibold text-gray-900 m-0">
+            {% if search_location or search_service %}
+                Search Results
+                {% if search_location %} in {{ search_location }}{% endif %}
+                {% if search_service %} for {{ search_service }}{% endif %}
+            {% else %}
+                Available Salons
+            {% endif %}
+            </h2>
+        <a href="{% url 'core:home' %}" class="text-gray-900 font-medium no-underline text-sm px-4 py-2 border border-gray-200 rounded-lg transition-all duration-200 hover:bg-gray-50 hover:border-gray-900">Clear filters</a>
+    </div>
+    {% else %}
+    <div class="flex items-center my-5">
+        <h2 class="text-2xl font-semibold text-gray-900 m-0 flex items-center">
+          <a href="{% url 'salons:search' %}" 
+             class="flex items-center gap-2 no-underline text-gray-900 hover:text-gray-700 transition-colors duration-200">
+            Featured salons in your area
+            <!-- Chevron Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" 
+                 class="w-5 h-5" 
+                 viewBox="0 0 24 24" 
+                 fill="none" 
+                 stroke="currentColor" 
+                 stroke-width="3">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        </h2>
+      </div>
+      
+    {% endif %}
+        
+    {% if search_location or search_service or search_date or search_time %}
+        {% if all_salons %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 mb-6">
+            {% for salon in all_salons %}
+            <a href="{% url 'salons:search' %}?salon={{ salon.id }}" class="cursor-pointer transition-transform duration-200 hover:scale-105 no-underline text-inherit ">
+                <div class="aspect-square rounded-xl overflow-hidden relative mb-3">
+                    <img src="{% static 'images/barbar-shop.webp' %}" alt="{{ salon.name }}" class="w-full h-full object-cover">
+                    <button class="absolute top-3 right-3 w-8 h-8 bg-white bg-opacity-90 rounded-full flex items-center justify-center cursor-pointer transition-all duration-200 hover:bg-white hover:scale-110 border-none" onclick="event.preventDefault(); toggleHeart(this)">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div>
+                    <h3 class="text-xs font-semibold text-gray-900 m-0 leading-tight line-clamp-1 mb-1">{{ salon.name }}</h3>
+                    <p class="text-gray-600 text-xs my-1 leading-tight">{{ salon.city }}, {{ salon.state }}</p>
+                    <div class="flex items-center gap-1 text-xs font-medium text-gray-900 mb-1">
+                        <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                        {{ salon.rating|default:"4.8" }}
+                    </div>
+                    <div class="font-semibold text-gray-900 text-xs">₹{{ salon.starting_price|default:"1,200" }} per service</div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-16 text-gray-600">
+            <svg class="w-12 h-12 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">No salons found</h3>
+            <p class="text-sm m-0">Try adjusting your search criteria or check back later for new listings</p>
+        </div>
+        {% endif %}
+    {% else %}
+        {% if featured_salons %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 mb-6">
+            {% for salon in featured_salons %}
+            <a href="{% url 'salons:search' %}?salon={{ salon.id }}" class="cursor-pointer transition-transform duration-200 hover:scale-105 no-underline text-inherit">
+                <div class="aspect-square rounded-xl overflow-hidden relative mb-3">
+                    <img src="{% static 'images/barbar-shop.webp' %}" alt="{{ salon.name }}" class="w-full h-full object-cover">
+                    <button class="absolute top-3 right-3 w-8 h-8 bg-white bg-opacity-90 rounded-full flex items-center justify-center cursor-pointer transition-all duration-200 hover:bg-white hover:scale-110 border-none" onclick="event.preventDefault(); toggleHeart(this)">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                        </svg>
+                    </button>
+        </div>
+        
+                <div>
+                    <h3 class="text-xs font-semibold text-gray-900 m-0 leading-tight line-clamp-1 mb-1">{{ salon.name }}</h3>
+                    <p class="text-gray-600 text-xs my-1 leading-tight">{{ salon.city }}, {{ salon.state }}</p>
+                    <div class="flex items-center gap-1 text-xs font-medium text-gray-900 mb-1">
+                        <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                        {{ salon.rating|default:"4.8" }}
+                    </div>
+                    <div class="font-semibold text-gray-900 text-xs">₹{{ salon.starting_price|default:"1,200" }} per service</div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-16 text-gray-600">
+            <svg class="w-12 h-12 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+            </svg>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">No salons found</h3>
+            <p class="text-sm m-0">Try adjusting your search or check back later for new listings</p>
+        </div>
+        {% endif %}
+    {% endif %}
+
+    <!-- Popular Services -->
+    {% comment %} <div class="my-12">
+        <h2 class="text-2xl font-semibold text-gray-900 m-0 mb-6">Popular right now</h2>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 mb-12">
+        <a href="{% url 'salons:search' %}?service=hair" class="p-5 border border-gray-200 rounded-xl text-center cursor-pointer transition-all duration-200 no-underline text-inherit hover:border-gray-900 hover:shadow-lg">
+            <div class="text-3xl mb-3 block">💇‍♀️</div>
+            <h3 class="text-base font-semibold text-gray-900 m-0 mb-1">Hair Styling</h3>
+            <p class="text-gray-600 text-sm m-0">500+ salons</p>
+        </a>
+        
+        <a href="{% url 'salons:search' %}?service=facial" class="p-5 border border-gray-200 rounded-xl text-center cursor-pointer transition-all duration-200 no-underline text-inherit hover:border-gray-900 hover:shadow-lg">
+            <div class="text-3xl mb-3 block">✨</div>
+            <h3 class="text-base font-semibold text-gray-900 m-0 mb-1">Facial Care</h3>
+            <p class="text-gray-600 text-sm m-0">300+ salons</p>
+        </a>
+        
+        <a href="{% url 'salons:search' %}?service=nails" class="p-5 border border-gray-200 rounded-xl text-center cursor-pointer transition-all duration-200 no-underline text-inherit hover:border-gray-900 hover:shadow-lg">
+            <div class="text-3xl mb-3 block">💅</div>
+            <h3 class="text-base font-semibold text-gray-900 m-0 mb-1">Nail Art</h3>
+            <p class="text-gray-600 text-sm m-0">200+ salons</p>
+        </a>
+        
+        <a href="{% url 'salons:search' %}?service=spa" class="p-5 border border-gray-200 rounded-xl text-center cursor-pointer transition-all duration-200 no-underline text-inherit hover:border-gray-900 hover:shadow-lg">
+            <div class="text-3xl mb-3 block">🧘‍♀️</div>
+            <h3 class="text-base font-semibold text-gray-900 m-0 mb-1">Spa & Wellness</h3>
+            <p class="text-gray-600 text-sm m-0">150+ salons</p>
+        </a>
+    </div>
+
+    <!-- Nearby Salons -->
+    <div class="flex justify-between items-center my-12">
+        <h2 class="text-2xl font-semibold text-gray-900 m-0">Salons near you</h2>
+        <a href="{% url 'salons:search' %}" class="text-gray-900 font-medium no-underline text-sm px-4 py-2 border border-gray-200 rounded-lg transition-all duration-200 hover:bg-gray-50 hover:border-gray-900">Show all</a>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 mb-12">
+        <!-- Placeholder salon cards for nearby -->
+        <a href="#" class="cursor-pointer transition-transform duration-200 hover:scale-105 no-underline text-inherit">
+            <div class="aspect-square rounded-xl overflow-hidden relative mb-3">
+                <img src="{% static 'images/barbar-shop.webp' %}" alt="Glamour Studio" class="w-full h-full object-cover">
+                <button class="absolute top-3 right-3 w-8 h-8 bg-white bg-opacity-90 rounded-full flex items-center justify-center cursor-pointer transition-all duration-200 hover:bg-white hover:scale-110 border-none" onclick="event.preventDefault(); toggleHeart(this)">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div>
+                <h3 class="text-xs font-semibold text-gray-900 m-0 leading-tight line-clamp-1 mb-1">Glamour Studio</h3>
+                <p class="text-gray-600 text-xs my-1 leading-tight">2.5 km away</p>
+                <div class="flex items-center gap-1 text-xs font-medium text-gray-900 mb-1">
+                    <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    4.9
+                </div>
+                <div class="font-semibold text-gray-900 text-xs">₹800 per service</div>
+            </div>
+        </a>
+
+        <a href="#" class="cursor-pointer transition-transform duration-200 hover:scale-105 no-underline text-inherit">
+            <div class="aspect-square rounded-xl overflow-hidden relative mb-3">
+                <img src="{% static 'images/barbar-shop.webp' %}" alt="Elite Spa" class="w-full h-full object-cover">
+                <button class="absolute top-3 right-3 w-8 h-8 bg-white bg-opacity-90 rounded-full flex items-center justify-center cursor-pointer transition-all duration-200 hover:bg-white hover:scale-110 border-none" onclick="event.preventDefault(); toggleHeart(this)">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div>
+                <h3 class="text-xs font-semibold text-gray-900 m-0 leading-tight line-clamp-1 mb-1">Elite Spa & Salon</h3>
+                <p class="text-gray-600 text-xs my-1 leading-tight">3.2 km away</p>
+                <div class="flex items-center gap-1 text-xs font-medium text-gray-900 mb-1">
+                    <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    4.7
+                </div>
+                <div class="font-semibold text-gray-900 text-xs">₹1,500 per service</div>
+            </div>
+        </a>
+
+        <a href="#" class="cursor-pointer transition-transform duration-200 hover:scale-105 no-underline text-inherit">
+            <div class="aspect-square rounded-xl overflow-hidden relative mb-3">
+                <img src="{% static 'images/barbar-shop.webp' %}" alt="Style Corner" class="w-full h-full object-cover">
+                <button class="absolute top-3 right-3 w-8 h-8 bg-white bg-opacity-90 rounded-full flex items-center justify-center cursor-pointer transition-all duration-200 hover:bg-white hover:scale-110 border-none" onclick="event.preventDefault(); toggleHeart(this)">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div>
+                <h3 class="text-xs font-semibold text-gray-900 m-0 leading-tight line-clamp-1 mb-1">Style Corner</h3>
+                <p class="text-gray-600 text-xs my-1 leading-tight">1.8 km away</p>
+                <div class="flex items-center gap-1 text-xs font-medium text-gray-900 mb-1">
+                    <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    4.5
+                </div>
+                <div class="font-semibold text-gray-900 text-xs">₹600 per service</div>
+            </div>
+        </a>
+    </div> {% endcomment %}
+    </div>
+
+<!-- Bottom Spacing -->
+{% comment %} <div class="py-16 md:py-20 lg:py-24"></div> {% endcomment %}
+
+<script>
+// Add interactive functionality
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // Category filter functionality
+    const categoryBtns = document.querySelectorAll('.category-btn');
+    categoryBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            categoryBtns.forEach(b => {
+                b.classList.remove('active', 'border-gray-900', 'text-gray-900', 'bg-gray-50');
+                b.classList.add('border-gray-200', 'text-gray-600');
+            });
+            this.classList.add('active', 'border-gray-900', 'text-gray-900', 'bg-gray-50');
+            this.classList.remove('border-gray-200', 'text-gray-600');
+        });
+    });
+
+    // Heart button functionality
+    const heartBtns = document.querySelectorAll('button[onclick*="toggleHeart"]');
+    heartBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const svg = this.querySelector('svg');
+            if (svg.getAttribute('fill') === 'none') {
+                svg.setAttribute('fill', '#ef4444');
+                svg.setAttribute('stroke', '#ef4444');
+            } else {
+                svg.setAttribute('fill', 'none');
+                svg.setAttribute('stroke', 'currentColor');
+            }
+        });
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('[onclick*="toggleLocationDropdown"]') && 
+            !e.target.closest('[onclick*="toggleServiceDropdown"]') && 
+            !e.target.closest('[onclick*="toggleDateTimeDropdown"]') &&
+            !e.target.closest('[id*="Dropdown"]')) {
+            closeAllDropdowns();
+        }
+    });
+});
+
+// Heart toggle function for inline onclick
+function toggleHeart(button) {
+    const svg = button.querySelector('svg');
+    if (svg.getAttribute('fill') === 'none') {
+        svg.setAttribute('fill', '#ef4444');
+        svg.setAttribute('stroke', '#ef4444');
+    } else {
+        svg.setAttribute('fill', 'none');
+        svg.setAttribute('stroke', 'currentColor');
+    }
+}
+
+// Dropdown functions
+function toggleLocationDropdown() {
+    const dropdown = document.getElementById('locationDropdown');
+    closeAllDropdowns();
+    if (dropdown) {
+        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+    }
+}
+
+function toggleServiceDropdown() {
+    const dropdown = document.getElementById('serviceDropdown');
+    closeAllDropdowns();
+    if (dropdown) {
+        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+    }
+}
+
+function toggleDateTimeDropdown() {
+    const dropdown = document.getElementById('dateTimeDropdown');
+    closeAllDropdowns();
+    if (dropdown) {
+        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+    }
+}
+
+function closeAllDropdowns() {
+    const locationDropdown = document.getElementById('locationDropdown');
+    const serviceDropdown = document.getElementById('serviceDropdown');
+    const dateTimeDropdown = document.getElementById('dateTimeDropdown');
+    
+    if (locationDropdown) locationDropdown.style.display = 'none';
+    if (serviceDropdown) serviceDropdown.style.display = 'none';
+    if (dateTimeDropdown) dateTimeDropdown.style.display = 'none';
+}
+
+function selectLocation(location) {
+    document.getElementById('locationInput').value = location;
+    closeAllDropdowns();
+    // Auto-submit form when location is selected
+    document.querySelector('form').submit();
+}
+
+function selectService(service, icon) {
+    document.getElementById('serviceText').textContent = service;
+    document.getElementById('serviceInput').value = service;
+    closeAllDropdowns();
+    // Auto-submit form when service is selected
+    document.querySelector('form').submit();
+}
+
+function applyDateTime() {
+    const dateInput = document.getElementById('dateInput');
+    const timeInput = document.getElementById('timeInput');
+    const dateTimeText = document.getElementById('dateTimeText');
+    
+    if (dateInput.value && timeInput.value) {
+        const date = new Date(dateInput.value);
+        const time = timeInput.value;
+        const formattedDate = date.toLocaleDateString('en-US', { 
+            weekday: 'short', 
+            month: 'short', 
+            day: 'numeric' 
+        });
+        const formattedTime = new Date(`2000-01-01T${time}`).toLocaleTimeString('en-US', { 
+            hour: 'numeric', 
+            minute: '2-digit',
+            hour12: true 
+        });
+        dateTimeText.textContent = `${formattedDate} at ${formattedTime}`;
+    } else if (dateInput.value) {
+        const date = new Date(dateInput.value);
+        const formattedDate = date.toLocaleDateString('en-US', { 
+            weekday: 'short', 
+            month: 'short', 
+            day: 'numeric' 
+        });
+        dateTimeText.textContent = formattedDate;
+    } else if (timeInput.value) {
+        const time = timeInput.value;
+        const formattedTime = new Date(`2000-01-01T${time}`).toLocaleTimeString('en-US', { 
+            hour: 'numeric', 
+            minute: '2-digit',
+            hour12: true 
+        });
+        dateTimeText.textContent = `Today at ${formattedTime}`;
+    }
+    closeAllDropdowns();
+    // Auto-submit form when date/time is applied
+    document.querySelector('form').submit();
+}
+
+function clearDateTime() {
+    document.getElementById('dateInput').value = '';
+    document.getElementById('timeInput').value = '';
+    document.getElementById('dateTimeText').textContent = 'Select date & time';
+    closeAllDropdowns();
+    // Auto-submit form when date/time is cleared
+    document.querySelector('form').submit();
+}
+</script>
+
+{% endblock %}

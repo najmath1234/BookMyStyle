@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign up/log in - BookMyStyle</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen bg-white">
+    <!-- Header with back button -->
+    <div class="absolute top-6 left-6 z-10">
+        <a href="{% url 'core:home' %}" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white  transition-shadow duration-200">
+            <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+        </a>
+    </div>
+
+    <!-- Main Container -->
+    <div class="min-h-screen grid grid-cols-1 lg:grid-cols-2">
+        <!-- Left Side - Role Selection -->
+        <div class="flex items-center justify-center p-6 lg:p-12">
+            <div class="w-full max-w-md">
+                <!-- Title -->
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl font-semibold text-gray-900 mb-2">Sign up/log in</h1>
+                </div>
+
+                <!-- Role Selection Cards -->
+                <div class="space-y-4 mb-8">
+                    <!-- Customer Card -->
+                    <a href="{% url 'accounts:customer_register' %}" class="group block">
+                        <div class="border-2 border-gray-200 rounded-2xl p-6 hover:border-gray-300 transition-all duration-200 hover:shadow-sm">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-1">BookMyStyle for customers</h3>
+                                    <p class="text-gray-600 text-sm">Book salons near you</p>
+                                </div>
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- Salon Owner Card -->
+                    <a href="{% url 'accounts:salon_owner_register' %}" class="group block">
+                        <div class="border-2 border-gray-200 rounded-2xl p-6 hover:border-gray-300 transition-all duration-200 hover:shadow-sm">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900 mb-1">BookMyStyle for salon owners</h3>
+                                    <p class="text-gray-600 text-sm">Manage and grow your salon business</p>
+                                </div>
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Footer Links -->
+                <div class="flex items-center justify-center mt-12 text-sm text-gray-600">
+                    <a href="{% url 'core:contact' %}" class="hover:text-purple-600 transition-colors">Help and support</a>
+                </div>
+
+                <!-- Already have account -->
+                <div class="text-center mt-8">
+                    <p class="text-sm text-gray-600">
+                        Already have an account? 
+                        <a href="{% url 'accounts:login' %}" class="text-purple-600 font-semibold hover:underline">
+                            Sign in
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side - Image -->
+        <div class="hidden lg:block relative">
+            <img src="{% static 'images/barbar-shop.webp' %}" 
+                 alt="Salon professional" 
+                 class="absolute inset-0 w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-l from-transparent to-black/10"></div>
+        </div>
+    </div>
+</body>
+</html>
